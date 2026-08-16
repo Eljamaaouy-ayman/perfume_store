@@ -1,10 +1,13 @@
-import { Controller, Get, Post, Body, Param, NotFoundException, Put, Delete, ParseIntPipe } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, NotFoundException, Put, Delete, ParseIntPipe, ValidationPipe } from "@nestjs/common";
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { UpdateProductDto } from "./dtos/update-product.dto";
+import { ProductService } from "./products.service";
 type ProductType = { id : number, title : string, price : number}
 
 @Controller("api/products")
 export class ProductsController {
+    constructor(private readonly productService: ProductService){}
+
     private products: ProductType[] = [
         {id : 1, title: 'book', price: 10},
         {id : 2, title: 'pen', price: 5},
@@ -13,47 +16,31 @@ export class ProductsController {
     // POST: /~/api/products
     @Post()
     public createNewProducts(@Body() Body : CreateProductDto){
-        const newProduct: ProductType = {
-            id : this.products.length + 1,
-            title : Body.title,
-            price : Body.price
-        }
-        this.products.push(newProduct)
-        return newProduct
+        return this.productService.createNewProducts(Body)
     }
 
     // GET: ~/api/products
     @Get()
     public getAllProducts() {
-        return this.products
+        return this.productService.getAll()
     }
 
 
     // GET: ~/api/products/:id
     @Get(":id")
     public getSingleProduct(@Param("id", ParseIntPipe) id :number) {
-        const product =  this.products.find(p => p.id === id)
-        if (!product)
-            throw new NotFoundException()
-        return product
+        return this.productService.getProductBy(id)
     }
 
     // PUT: ~/api/products/:id
     @Put(":id")
     public putSingleProduct(@Param("id") id :string, @Body() Body : UpdateProductDto) {
-        const product =  this.products.find(p => p.id === parseInt(id))
-        if (!product)
-            throw new NotFoundException()
-        console.log(product)
-        return {message : "product updated successfully id : " + id }
+        return this.productService.Update(id, Body)
     }
 
     // DELETE: ~/api/products/:id
     @Delete(":id")
     public DeleteProduct(@Param("id") id :string) {
-        const product =  this.products.find(p => p.id === parseInt(id))
-        if (!product)
-            throw new NotFoundException()
-        return { message : "product deleted"}
+        return this.productService.Delete(id)
     }
 }
