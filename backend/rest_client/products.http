@@ -12,15 +12,18 @@ POST http://localhost:3000/api/products
 Content-Type: application/json
 
 {
-    "title":"this is the title",
-    "price":0
+    "title":"this is a laptop",
+    "description" : "about this laptop",
+    "price":700
 }
 
 ### update a product
-PUT http://localhost:3000/api/products/3
+PUT http://localhost:3000/api/products/2
 Content-Type: application/json
 
 {
-    "title":"this is the title",
-    "price":0
+    "title":"product one updated again"
 }
+
+### delete a product
+DELETE http://localhost:3000/api/products/10

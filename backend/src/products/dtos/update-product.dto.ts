@@ -8,6 +8,11 @@ export class UpdateProductDto {
     @IsOptional()
     title : string;
 
+    @IsString()
+    @MinLength(5)
+    @IsOptional()
+    description?: string;
+
     @IsNotEmpty()
     @IsNumber()
     @IsOptional()

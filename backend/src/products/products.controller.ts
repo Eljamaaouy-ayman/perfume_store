@@ -34,13 +34,13 @@ export class ProductsController {
 
     // PUT: ~/api/products/:id
     @Put(":id")
-    public putSingleProduct(@Param("id") id :string, @Body() Body : UpdateProductDto) {
+    public putSingleProduct(@Param("id") id :number, @Body() Body : UpdateProductDto) {
         return this.productService.Update(id, Body)
     }
 
     // DELETE: ~/api/products/:id
     @Delete(":id")
-    public DeleteProduct(@Param("id") id :string) {
+    public DeleteProduct(@Param("id") id :number) {
         return this.productService.Delete(id)
     }
 }
