@@ -3,6 +3,8 @@
 /node_modules
 /build
 
+/src/utils/interceptors/logger.interceptor.ts
+
 # Logs
 logs
 *.log

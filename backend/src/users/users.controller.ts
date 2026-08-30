@@ -1,10 +1,15 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
 import { AuthGuard } from "./guards/auth.guard";
 import { CurrentUser } from "./decorators/current-user.decorator";
 import type { JWTPayloadType } from "src/utils/types";
+import { Roles } from "./decorators/user-role.decorator";
+import { UserType } from "src/utils/enums";
+import { AuthRolesGuard } from "./guards/auth-roles.guard";
+import { UpdateUserDto } from "./dtos/update-user.dto";
+import { loggerInterceptor } from "src/utils/interceptors/logger.interceptor";
 
 @Controller("api/users")
 export class UsersController {
@@ -27,13 +32,32 @@ export class UsersController {
     }
 
     @Get()
+    @Roles(UserType.ADMIN)
+    @UseGuards(AuthRolesGuard)
+    // @UseInterceptors(ClassSerializerInterceptor)
     public getAllUsers(){
         return this.usersService.getAll()
     }
 
+    @Put()
+    @Roles(UserType.ADMIN, UserType.NORMAL_USER)
+    @UseGuards(AuthRolesGuard)
+    public updateUser(@CurrentUser() payload : JWTPayloadType, @Body() Body: UpdateUserDto){
+        return this.usersService.updateUser(payload.id, Body)
+    }
+
+    @Delete(":id")
+    @Roles(UserType.ADMIN, UserType.NORMAL_USER)
+    @UseGuards(AuthRolesGuard)
+    public deleteUser(@Param("id", ParseIntPipe) id: number, @CurrentUser() payload: JWTPayloadType){
+        return this.usersService.delete(id, payload)
+    }
+
     @Get("current-user")
     @UseGuards(AuthGuard)
+    @UseInterceptors(ClassSerializerInterceptor)
     public getCurrentUser(@CurrentUser() payload: JWTPayloadType){
+        console.log("get current user route called")
         return this.usersService.getCurrentUser(payload.id)
     }
 }
