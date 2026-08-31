@@ -1,10 +1,13 @@
 import { CreateReviewDto } from './dtos/create-review.dto';
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Review } from "./reviews.entity";
 import { Repository } from "typeorm";
 import { ProductService } from "src/products/products.service";
 import { UsersService } from "src/users/users.service";
+import { UpdateReviewDto } from './dtos/update-review.dto';
+import { JWTPayloadType } from 'src/utils/types';
+import { UserType } from 'src/utils/enums';
 
 @Injectable()
 export class ReviewsService {
@@ -46,11 +49,46 @@ export class ReviewsService {
         return this.reviewRepository.find()
     }
 
+    /**
+     * get one review by it's id
+     * @param id the id of the review
+     * @returns the review from the database
+     */
     public async getOneReview(id: number){
         const review = await this.reviewRepository.findOne({where : {id}})
         if (!review)
             throw new NotFoundException("reivew not found")
         return review
+    }
+
+
+    /**
+     * update a review
+     * @param reviewId id of the review
+     * @param payload data of the review updater
+     * @param dto new data of the review
+     * @returns successful message
+     */
+    public async updateReview(reviewId: number, payload: JWTPayloadType, dto: UpdateReviewDto){
+        const review = await this.getOneReview(reviewId)
+        if (review.user.id !== payload.id && payload.usertype !== UserType.ADMIN)
+            throw new ForbiddenException("access denied, forbidden action")
+        else{
+            review.rating = dto.rating || review.rating,
+            review.comment = dto.comment || review.comment
+            await this.reviewRepository.save(review)
+            return {message: "review updated successfully"}
+        }
+    }
+
+    public async delete(id:number, payload:JWTPayloadType){
+        const review = await this.getOneReview(id)
+        if (review.user.id !== payload.id && payload.usertype !== UserType.ADMIN)
+            throw new ForbiddenException("access denied, forbidden action")
+        else{
+            this.reviewRepository.remove(review)
+            return {message: "review deleted succesfully"}
+        }
     }
     
 }
