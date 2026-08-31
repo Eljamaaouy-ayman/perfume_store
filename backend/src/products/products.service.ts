@@ -56,7 +56,7 @@ export class ProductService{
     public async getProductBy(id :number) {
         const product = await this.productsRepository.findOne({where: {id}})
         if (!product)
-            throw new NotFoundException()
+            throw new NotFoundException("product not found")
         return product
     }
 

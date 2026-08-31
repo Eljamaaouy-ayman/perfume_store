@@ -46,8 +46,8 @@ export class UsersController {
     }
 
     @Delete(":id")
-    @Roles(UserType.ADMIN, UserType.NORMAL_USER)
     @UseGuards(AuthRolesGuard)
+    @Roles(UserType.ADMIN, UserType.NORMAL_USER)
     public deleteUser(@Param("id", ParseIntPipe) id: number, @CurrentUser() payload: JWTPayloadType){
         return this.usersService.delete(id, payload)
     }
