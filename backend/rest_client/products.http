@@ -1,6 +1,6 @@
 
 ### get all products
-GET http://localhost:3000/api/products
+GET http://localhost:3000/api/products?title=chair&minPrice=1&maxPrice=1000
 
 
 ### get single product by id

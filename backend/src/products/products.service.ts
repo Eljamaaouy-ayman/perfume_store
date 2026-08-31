@@ -2,7 +2,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Injectable, NotFoundException } from "@nestjs/common"
 import { CreateProductDto } from "./dtos/create-product.dto"
 import { UpdateProductDto } from "./dtos/update-product.dto"
-import { Repository } from "typeorm"
+import { Between, Like, Repository } from "typeorm"
 import { Product } from "./product.entity"
 import { InjectRepository } from "@nestjs/typeorm"
 import { UsersService } from 'src/users/users.service';
@@ -39,8 +39,12 @@ export class ProductService{
      * get all the products
      * @returns collection of the products from the database
      */
-    public getAll() {
-        return this.productsRepository.find({relations: {user: true, reviews: true}})
+    public getAll(title?: string, minPrice?: string, maxPrice?: string) {
+        const filters = {
+            ...(title ? {title: Like(`%${title.toLocaleLowerCase()}%`)} : {}),
+            ...(minPrice && maxPrice) ? {price: Between(parseInt(minPrice), parseInt(maxPrice))} : {}
+        }
+        return this.productsRepository.find({where: filters})
     }
 
 

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, NotFoundException, Put, Delete, ParseIntPipe, ValidationPipe, UseGuards } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, NotFoundException, Put, Delete, ParseIntPipe, ValidationPipe, UseGuards, Query } from "@nestjs/common";
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { UpdateProductDto } from "./dtos/update-product.dto";
 import { ProductService } from "./products.service";
@@ -23,8 +23,13 @@ export class ProductsController {
 
     // GET: ~/api/products
     @Get()
-    public getAllProducts() {
-        return this.productService.getAll()
+    public getAllProducts(
+        @Query('title') title: string,
+        @Query('minPrice') minPrice: string,
+        @Query('maxPrice') maxPrice: string
+    ) {
+        console.log(title)
+        return this.productService.getAll(title, minPrice, maxPrice)
     }
 
 
