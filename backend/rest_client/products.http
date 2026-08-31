@@ -26,4 +26,5 @@ Content-Type: application/json
 }
 
 ### delete a product
-DELETE http://localhost:3000/api/products/10
+DELETE http://localhost:3000/api/products/3
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcnR5cGUiOiJhZG1pbiIsImlhdCI6MTc4ODEzNzAxMywiZXhwIjoxNzg4MjIzNDEzfQ.uN-BpiI2I-2Z_na5vS6jQOd9QcR957x1QnxUaCFj5mg

@@ -34,7 +34,6 @@ export class UsersController {
     @Get()
     @Roles(UserType.ADMIN)
     @UseGuards(AuthRolesGuard)
-    // @UseInterceptors(ClassSerializerInterceptor)
     public getAllUsers(){
         return this.usersService.getAll()
     }
@@ -55,7 +54,6 @@ export class UsersController {
 
     @Get("current-user")
     @UseGuards(AuthGuard)
-    @UseInterceptors(ClassSerializerInterceptor)
     public getCurrentUser(@CurrentUser() payload: JWTPayloadType){
         console.log("get current user route called")
         return this.usersService.getCurrentUser(payload.id)

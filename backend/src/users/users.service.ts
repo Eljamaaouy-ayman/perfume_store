@@ -1,21 +1,22 @@
 import { UserType } from 'src/utils/enums';
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { RegisterDto } from "./dtos/register.dto";
-import * as bcrypt from 'bcryptjs';
-import { LoginDto } from "./dtos/login.dto";
-import { JwtService } from "@nestjs/jwt";
 import { JWTPayloadType, accessTokenType } from 'src/utils/types';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { AuthProvider } from './auth.provider';
+import { RegisterDto } from './dtos/register.dto';
+import { LoginDto } from './dtos/login.dto';
+
 
 @Injectable()
 export class UsersService{
     constructor(
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
-        private readonly jwtService: JwtService,
+        private readonly authProviAuthProvider: AuthProvider
     ){}
+
 
 
     /**
@@ -24,45 +25,17 @@ export class UsersService{
      * @returns jwt access token
      */
     public async register (registerDto: RegisterDto): Promise<accessTokenType>{
-        const {email, username, password} = registerDto
-
-        const userFromDb = await this.usersRepository.findOne({where: {email}})
-        if (userFromDb) throw new BadRequestException("user already exist");
-
-        const hashedpassword = await this.hashPassword(password)
-
-        let newUser = this.usersRepository.create({
-            email,
-            password: hashedpassword,
-            username
-        })
-
-        newUser = await this.usersRepository.save(newUser)
-        
-        const accessToken = await this.generateJWTToken({id: newUser.id, usertype:newUser.userType})
-        
-        return {accessToken}
+        return this.authProviAuthProvider.register(registerDto)
     }
 
     /**
      * log in user
      * @param loginDto data for log in user
      * @returns jwt access token
-     */
+    */
     public async login (loginDto: LoginDto): Promise<accessTokenType>{
-        const {email, password} = loginDto;
-
-        const user = await this.usersRepository.findOne({where: {email}});
-        if (!user) throw new BadRequestException("unvalid email or password")
-        
-        const passwordMatch = await bcrypt.compare(password, user.password)
-        if (!passwordMatch) throw new BadRequestException("unvalid email or password")
-        
-        const accessToken = await this.generateJWTToken({id: user.id, usertype:user.userType})
-        return {accessToken}
-    } 
-
-
+        return this.authProviAuthProvider.login(loginDto)
+    }
     /**
      * get current user
      * @param id id of the current user
@@ -87,7 +60,7 @@ export class UsersService{
         if(user){
             user.username = username ?? user.username
             if (password){
-                user.password = await this.hashPassword(password)
+                user.password = await this.authProviAuthProvider.hashPassword(password)
             }
             return this.usersRepository.save(user)
         }
@@ -116,16 +89,5 @@ export class UsersService{
     public getAll(): Promise<User[]>{
         return this.usersRepository.find()
     }
-    /**
-     * generate JWT tokwn
-     * @param payload JWT payload
-     * @returns token
-     */
-    private generateJWTToken (payload: JWTPayloadType) : Promise<string>{
-        return this.jwtService.signAsync(payload)
-    }
-    private async hashPassword(password: string){
-        const salt = await bcrypt.genSalt(10)
-        return await bcrypt.hash(password, salt)
-    }
+
 }
