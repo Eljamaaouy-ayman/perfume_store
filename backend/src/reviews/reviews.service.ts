@@ -45,8 +45,11 @@ export class ReviewsService {
      * get all the reviews
      * @returns collection of reviews from the database
      */
-    public getAll(){
-        return this.reviewRepository.find()
+    public getAll(pageNumber: number, reviewPerPage: number){
+        return this.reviewRepository.find({
+            skip: (pageNumber - 1) * reviewPerPage,
+            take: reviewPerPage,
+            order: {createdAt: "DESC"}})
     }
 
     /**
@@ -71,7 +74,7 @@ export class ReviewsService {
      */
     public async updateReview(reviewId: number, payload: JWTPayloadType, dto: UpdateReviewDto){
         const review = await this.getOneReview(reviewId)
-        if (review.user.id !== payload.id && payload.usertype !== UserType.ADMIN)
+        if (review.user.id !== payload.id)
             throw new ForbiddenException("access denied, forbidden action")
         else{
             review.rating = dto.rating || review.rating,
