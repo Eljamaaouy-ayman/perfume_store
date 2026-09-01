@@ -1,5 +1,5 @@
 import { UserType } from 'src/utils/enums';
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -8,6 +8,8 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthProvider } from './auth.provider';
 import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
+import { join } from 'node:path';
+import { unlinkSync } from 'node:fs';
 
 
 @Injectable()
@@ -90,4 +92,35 @@ export class UsersService{
         return this.usersRepository.find()
     }
 
+    /**
+     * upload user profile image
+     * @param userId id of the user
+     * @param newProfileImage new image of the user
+     * @returns the user from the database
+     */
+    public async setProfileImage(userId: number, newProfileImage: string){
+        const user = await this.getCurrentUser(userId)
+        if (user.profileImage === null || user.profileImage === "")
+            user.profileImage = newProfileImage || ""
+        else{
+            await this.removeProfileImage(userId)
+            user.profileImage = newProfileImage || ""
+        }
+        return this.usersRepository.save(user)
+    }
+
+    /**
+     * remove profile image
+     * @param userId id of the logged in user
+     * @returns user from the database
+     */
+    public async removeProfileImage(userId: number){
+        const user = await this.getCurrentUser(userId)
+        if (user.profileImage === null || user.profileImage === "")
+            throw new BadRequestException("there is no profile image")
+        const imagePath = join(process.cwd(), `/images/users/${user.profileImage}`)
+        unlinkSync(imagePath)
+        user.profileImage = ""
+        return this.usersRepository.save(user)
+    }
 }

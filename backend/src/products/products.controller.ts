@@ -27,8 +27,7 @@ export class ProductsController {
         @Query('title') title: string,
         @Query('minPrice') minPrice: string,
         @Query('maxPrice') maxPrice: string
-    ) {
-        console.log(title)
+    ) {       
         return this.productService.getAll(title, minPrice, maxPrice)
     }
 

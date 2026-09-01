@@ -1,4 +1,4 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, ClassSerializerInterceptor, Controller, Delete, ForbiddenException, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { RegisterDto } from "./dtos/register.dto";
 import { LoginDto } from "./dtos/login.dto";
@@ -10,6 +10,9 @@ import { UserType } from "src/utils/enums";
 import { AuthRolesGuard } from "./guards/auth-roles.guard";
 import { UpdateUserDto } from "./dtos/update-user.dto";
 import { loggerInterceptor } from "src/utils/interceptors/logger.interceptor";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import type { Response } from "express";
 
 @Controller("api/users")
 export class UsersController {
@@ -58,4 +61,32 @@ export class UsersController {
         console.log("get current user route called")
         return this.usersService.getCurrentUser(payload.id)
     }
+
+    //Post ~/api/users/upload-image
+    @Post('upload-image')
+    @UseGuards(AuthGuard)
+    @UseInterceptors(FileInterceptor('user-image'))
+    public uploadProfileImage(
+        @UploadedFile() file: Express.Multer.File,
+        @CurrentUser() payload: JWTPayloadType
+    ){
+        console.log("hello")
+        if (!file) return new BadRequestException("no image provided")
+        return this.usersService.setProfileImage(payload.id, file.filename)
+    }
+
+    // Delete ~/api/users/images/remove-profile-image
+    @Delete("images/remove-profile-image")
+    @UseGuards(AuthGuard)
+    public removeProfileImage(@CurrentUser() payload: JWTPayloadType){
+        return this.usersService.removeProfileImage(payload.id)
+    }
+
+    // Get ~/api/users/images/profile-image
+    @Get("images/:image")
+    @UseGuards(AuthGuard)
+    public getProfileImage(@Param("image")image : string, @Res() res: Response){
+        return res.sendFile(image, { root: "images/users" })
+    }
+
 }
