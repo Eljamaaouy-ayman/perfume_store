@@ -1,4 +1,5 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { MailerService } from '@nestjs-modules/mailer';
+import { BadRequestException, Injectable, RequestTimeoutException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { JwtService } from "@nestjs/jwt";
@@ -7,12 +8,14 @@ import { RegisterDto } from "./dtos/register.dto";
 import { accessTokenType, JWTPayloadType } from "src/utils/types";
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from "./dtos/login.dto";
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthProvider{
     constructor(
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
+        private readonly mailService: MailService
     ){}
 
     /**
@@ -55,9 +58,13 @@ export class AuthProvider{
         const passwordMatch = await bcrypt.compare(password, user.password)
         if (!passwordMatch) throw new BadRequestException("unvalid email or password")
             
-            const accessToken = await this.generateJWTToken({id: user.id, usertype:user.userType})
-            return {accessToken}
-        }
+        const accessToken = await this.generateJWTToken({id: user.id, usertype: user.userType})
+
+        await this.mailService.sendLoginMail(user.email)
+
+
+        return {accessToken}
+    }
     
     public async hashPassword(password: string){
         const salt = await bcrypt.genSalt(10)
