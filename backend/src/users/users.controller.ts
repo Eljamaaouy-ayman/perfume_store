@@ -13,6 +13,8 @@ import { loggerInterceptor } from "src/utils/interceptors/logger.interceptor";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import type { Response } from "express";
+import { ForgotPasswordDto } from "./dtos/forgot-password.dto";
+import { ResetPasswordDto } from "./dtos/reset-password.dto";
 
 @Controller("api/users")
 export class UsersController {
@@ -87,6 +89,31 @@ export class UsersController {
     @UseGuards(AuthGuard)
     public getProfileImage(@Param("image")image : string, @Res() res: Response){
         return res.sendFile(image, { root: "images/users" })
+    }
+
+    // GET ~/api/users/verify-email/:id/:verificatoinToken
+    @Get("verify-email/:id/:verificationToken")
+    public verifyEmail(@Param("id", ParseIntPipe) id : number, @Param("verificationToken") token: string){
+        return this.usersService.verifyEmail(id, token)
+    }
+
+    // POST ~/api/users/forgot-password
+    @Post("forgot-password")
+    @HttpCode(HttpStatus.OK)
+    public forgotPassword(@Body() body: ForgotPasswordDto){
+        return this.usersService.sendResetPasswordLink(body.email)
+    }
+    
+    // GET ~/api/users/reset-password/:id/:resetPasswordToken
+    @Get("reset-password/:id/:resetPasswordToken")
+    public getResetPassword(@Param("id", ParseIntPipe)id : number, @Param("resetPasswordToken") token: string){
+        return this.usersService.getResetPassword(id, token)
+    }
+
+    // POST ~/api/users/reset-password
+    @Post("reset-password")
+    public resetPassword(@Body() body: ResetPasswordDto){
+        return this.usersService.resetPassword(body)
     }
 
 }

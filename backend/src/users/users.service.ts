@@ -10,6 +10,7 @@ import { RegisterDto } from './dtos/register.dto';
 import { LoginDto } from './dtos/login.dto';
 import { join } from 'node:path';
 import { unlinkSync } from 'node:fs';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 
 @Injectable()
@@ -26,7 +27,7 @@ export class UsersService{
      * @param registerDto data about the new user
      * @returns jwt access token
      */
-    public async register (registerDto: RegisterDto): Promise<accessTokenType>{
+    public async register (registerDto: RegisterDto){
         return this.authProviAuthProvider.register(registerDto)
     }
 
@@ -35,7 +36,7 @@ export class UsersService{
      * @param loginDto data for log in user
      * @returns jwt access token
     */
-    public async login (loginDto: LoginDto): Promise<accessTokenType>{
+    public async login (loginDto: LoginDto){
         return this.authProviAuthProvider.login(loginDto)
     }
     /**
@@ -122,5 +123,55 @@ export class UsersService{
         unlinkSync(imagePath)
         user.profileImage = ""
         return this.usersRepository.save(user)
+    }
+
+    /**
+     * verify email
+     * @param userId id of the user
+     * @param verificationToken verification token
+     * @returns success message
+     */
+    public async verifyEmail(userId : number, verificationToken: string){
+        const user = await this.getCurrentUser(userId)
+
+        if (user.verificatoinToken === null || user.verificatoinToken === "")
+            throw new NotFoundException("verification token not found")
+
+        if (user.verificatoinToken !== verificationToken)
+            throw new BadRequestException("unvalid link")
+
+        user.isAccountVerified = true
+        user.verificatoinToken = ""
+
+        await this.usersRepository.save(user)
+        return { message: "your email has been successfully verified" }
+    }
+
+    /**
+     * sending reset password link
+     * @param email email of the user
+     * @returns a success message
+     */
+    public sendResetPasswordLink(email: string){
+        return this.authProviAuthProvider.sendResetPasswordLink(email)
+    }
+
+    /**
+     * get the reset password
+     * @param userId id of the user
+     * @param resetPasswordToken token of the reset password
+     * @returns success message
+     */
+    public getResetPassword(userId: number, resetPasswordToken: string){
+        return this.authProviAuthProvider.getResetPasswordLink(userId, resetPasswordToken)
+    }
+
+    /**
+     * reset the password
+     * @param dto infos about the new password
+     * @returns success message
+     */
+    public resetPassword(dto: ResetPasswordDto){
+        return this.authProviAuthProvider.resetPassword(dto)
     }
 }

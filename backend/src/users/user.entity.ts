@@ -29,6 +29,12 @@ export class User{
     @Column({ default: false })
     isAccountVerified: boolean;
 
+    @Column({nullable: true})
+    verificatoinToken: string
+
+    @Column({nullable: true})
+    resetPasswordToken: string
+
     @Column({ nullable: true, default: null })
     profileImage: string;
 

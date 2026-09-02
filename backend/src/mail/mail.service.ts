@@ -31,4 +31,46 @@ export class MailService{
             throw new RequestTimeoutException()
         }
     }
+
+    /**
+     * sending verify email template
+     * @param email email of the registered user
+     * @param link link with id of the user and verification token
+     */
+    public async verifyEmail(email: string, link : string){
+        try{
+            await this.mailerService.sendMail({
+                to: email,
+                from: `<no-reply@perfume-store.com>`,
+                subject: "verify your account",
+                template: "verify-email",
+                context: {link}
+            })
+        }
+        catch{
+            console.log("error")
+            throw new RequestTimeoutException()
+        }
+    }
+
+    /**
+     * sending reset password template
+     * @param email email of the registered user
+     * @param link link with id of the user and reset password token
+     */
+    public async resetPassword(email: string, resetPasswordLink : string){
+        try{
+            await this.mailerService.sendMail({
+                to: email,
+                from: `<no-reply@perfume-store.com>`,
+                subject: "reset password",
+                template: "reset-password",
+                context: {resetPasswordLink}
+            })
+        }
+        catch{
+            console.log("error")
+            throw new RequestTimeoutException()
+        }
+    }
 }
