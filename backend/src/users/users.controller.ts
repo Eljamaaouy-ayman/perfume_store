@@ -15,8 +15,10 @@ import { diskStorage } from "multer";
 import type { Response } from "express";
 import { ForgotPasswordDto } from "./dtos/forgot-password.dto";
 import { ResetPasswordDto } from "./dtos/reset-password.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller("api/users")
+@ApiTags("Users")
 export class UsersController {
 
     constructor(private readonly usersService : UsersService,

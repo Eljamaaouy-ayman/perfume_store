@@ -7,9 +7,11 @@ import { Roles } from "src/users/decorators/user-role.decorator";
 import { UserType } from "src/utils/enums";
 import { CurrentUser } from "src/users/decorators/current-user.decorator";
 import type { JWTPayloadType } from "src/utils/types";
+import { ApiOperation, ApiQuery, ApiTags } from "@nestjs/swagger";
 type ProductType = { id : number, title : string, price : number}
 
 @Controller("api/products")
+@ApiTags("Products")
 export class ProductsController {
     constructor(private readonly productService: ProductService){}
 
@@ -23,11 +25,31 @@ export class ProductsController {
 
     // GET: ~/api/products
     @Get()
+    @ApiOperation({summary: "get collection of products"})
+    @ApiQuery({
+        name: "title",
+        required: false,
+        type: "string",
+        description: "search for products based on their name"
+    })
+    @ApiQuery({
+        name: "minPrice",
+        required: false,
+        type: "string",
+        description: "search for products based on their min price"
+    })
+    @ApiQuery({
+        name: "maxPrice",
+        required: false,
+        type: "string",
+        description: "search for products based on their max Price"
+    })
     public getAllProducts(
         @Query('title') title: string,
         @Query('minPrice') minPrice: string,
         @Query('maxPrice') maxPrice: string
     ) {       
+        console.log(minPrice, maxPrice)
         return this.productService.getAll(title, minPrice, maxPrice)
     }
 

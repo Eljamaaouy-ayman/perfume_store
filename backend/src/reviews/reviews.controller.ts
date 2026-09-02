@@ -7,8 +7,10 @@ import { AuthRolesGuard } from "src/users/guards/auth-roles.guard";
 import { Roles } from "src/users/decorators/user-role.decorator";
 import { UserType } from "src/utils/enums";
 import { UpdateReviewDto } from "./dtos/update-review.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller('api/reviews')
+@ApiTags("Reviews")
 export class ReviewsController {
 
     constructor(private readonly reviewsService : ReviewsService,

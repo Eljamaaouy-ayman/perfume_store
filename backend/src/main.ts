@@ -14,7 +14,13 @@ async function bootstrap() {
     origin: "http://localhost:3000"
   });
 
-  const swagger = new DocumentBuilder().setVersion("1.0").build()
+  const swagger = new DocumentBuilder()
+  .setTitle("Perfume Store")
+  .setDescription("Store Api Description")
+  .addServer("http://localhost:3001")
+  .setTermsOfService("http://localhost:3000/terms-of-service")
+  .setVersion("1.0")
+  .build()
   const documentation = SwaggerModule.createDocument(app, swagger)
   SwaggerModule.setup('swagger', app, documentation)
 
