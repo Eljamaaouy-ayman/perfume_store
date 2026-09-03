@@ -19,6 +19,8 @@ async function bootstrap() {
   .setDescription("Store Api Description")
   .addServer("http://localhost:3001")
   .setTermsOfService("http://localhost:3000/terms-of-service")
+  .addSecurity('bearer', {type: 'http', scheme: 'bearer'})
+  .addBearerAuth()
   .setVersion("1.0")
   .build()
   const documentation = SwaggerModule.createDocument(app, swagger)

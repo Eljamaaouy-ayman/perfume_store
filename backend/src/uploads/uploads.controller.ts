@@ -1,8 +1,9 @@
 import { BadRequestException, Controller, Get, Param, Post, Res, UploadedFile, UploadedFiles, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor, FilesInterceptor } from "@nestjs/platform-express";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiTags } from "@nestjs/swagger";
 import type { Response } from "express";
 import { diskStorage } from "multer";
+import { FilesUploadDto } from "./dtos/files-upload.dto";
 
 @Controller("api/uploads")
 @ApiTags("Uploads")
@@ -20,6 +21,8 @@ export class UploadsController{
     // Post ~/api/uploads/multiple-files
     @Post('multiple-files')
     @UseInterceptors(FilesInterceptor('files'))
+    @ApiConsumes("multipart/form-data")
+    @ApiBody({ type: FilesUploadDto, description: "uploading multiple images" })
     public uploadMultipleFiles(@UploadedFiles()files: Array<Express.Multer.File> ){
         if(!files || files.length === 0) throw new BadRequestException("no files provided")
 

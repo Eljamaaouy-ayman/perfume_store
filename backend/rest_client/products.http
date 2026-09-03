@@ -1,6 +1,7 @@
 
 ### get all products
-GET http://localhost:3000/api/products?title=chair&minPrice=1&maxPrice=1000
+GET http://localhost:3001/api/products?title=chair&minPrice=1&maxPrice=1000
+Authorization: thisisatoken
 
 
 ### get single product by id

@@ -25,7 +25,7 @@ export class AuthRolesGuard implements CanActivate{
             return false
         const request: Request = context.switchToHttp().getRequest()
         const [type, token] = request.headers.authorization?.split(" ") ?? []
-        if (token && type === "bearer"){
+        if (token && type === "Bearer"){
             try{
                 const payload : JWTPayloadType = await this.jwtService.verifyAsync(
                     token,

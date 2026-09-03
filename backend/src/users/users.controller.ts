@@ -15,7 +15,8 @@ import { diskStorage } from "multer";
 import type { Response } from "express";
 import { ForgotPasswordDto } from "./dtos/forgot-password.dto";
 import { ResetPasswordDto } from "./dtos/reset-password.dto";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBody, ApiConsumes, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { ImageUploadDto } from "./dtos/image-upload.dto";
 
 @Controller("api/users")
 @ApiTags("Users")
@@ -41,6 +42,7 @@ export class UsersController {
     @Get()
     @Roles(UserType.ADMIN)
     @UseGuards(AuthRolesGuard)
+    @ApiSecurity('bearer')
     public getAllUsers(){
         return this.usersService.getAll()
     }
@@ -48,6 +50,7 @@ export class UsersController {
     @Put()
     @Roles(UserType.ADMIN, UserType.NORMAL_USER)
     @UseGuards(AuthRolesGuard)
+    @ApiSecurity('bearer')
     public updateUser(@CurrentUser() payload : JWTPayloadType, @Body() Body: UpdateUserDto){
         return this.usersService.updateUser(payload.id, Body)
     }
@@ -55,12 +58,14 @@ export class UsersController {
     @Delete(":id")
     @UseGuards(AuthRolesGuard)
     @Roles(UserType.ADMIN, UserType.NORMAL_USER)
+    @ApiSecurity('bearer')
     public deleteUser(@Param("id", ParseIntPipe) id: number, @CurrentUser() payload: JWTPayloadType){
         return this.usersService.delete(id, payload)
     }
 
     @Get("current-user")
     @UseGuards(AuthGuard)
+    @ApiSecurity('bearer')
     public getCurrentUser(@CurrentUser() payload: JWTPayloadType){
         console.log("get current user route called")
         return this.usersService.getCurrentUser(payload.id)
@@ -69,12 +74,14 @@ export class UsersController {
     //Post ~/api/users/upload-image
     @Post('upload-image')
     @UseGuards(AuthGuard)
+    @ApiSecurity('bearer')
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ type: ImageUploadDto, description: 'profile image' })
     @UseInterceptors(FileInterceptor('user-image'))
     public uploadProfileImage(
         @UploadedFile() file: Express.Multer.File,
         @CurrentUser() payload: JWTPayloadType
     ){
-        console.log("hello")
         if (!file) return new BadRequestException("no image provided")
         return this.usersService.setProfileImage(payload.id, file.filename)
     }
@@ -82,6 +89,7 @@ export class UsersController {
     // Delete ~/api/users/images/remove-profile-image
     @Delete("images/remove-profile-image")
     @UseGuards(AuthGuard)
+    @ApiSecurity('bearer')
     public removeProfileImage(@CurrentUser() payload: JWTPayloadType){
         return this.usersService.removeProfileImage(payload.id)
     }
@@ -89,6 +97,7 @@ export class UsersController {
     // Get ~/api/users/images/profile-image
     @Get("images/:image")
     @UseGuards(AuthGuard)
+    @ApiSecurity('bearer')
     public getProfileImage(@Param("image")image : string, @Res() res: Response){
         return res.sendFile(image, { root: "images/users" })
     }

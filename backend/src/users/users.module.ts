@@ -29,7 +29,7 @@ import { MailModule } from "src/mail/mail.module";
         }),
         MulterModule.register({
             storage: diskStorage({
-                destination: './images',
+                destination: './images/users',
                 filename: (req, file, cb) => {
                     const prefix = `${Date.now()}-${Math.round(Math.random() * 1000000)}`
                     const filename = `${prefix}-${file.originalname}`
