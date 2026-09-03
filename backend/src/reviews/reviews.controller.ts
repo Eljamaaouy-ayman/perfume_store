@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseGuards } from "@nestjs/common";
 import { ReviewsService } from "./reviews.service";
 import { CreateReviewDto } from "./dtos/create-review.dto";
-import { CurrentUser } from "src/users/decorators/current-user.decorator";
-import type { JWTPayloadType } from "src/utils/types";
-import { AuthRolesGuard } from "src/users/guards/auth-roles.guard";
-import { Roles } from "src/users/decorators/user-role.decorator";
-import { UserType } from "src/utils/enums";
+import { CurrentUser } from "../users/decorators/current-user.decorator";
+import type { JWTPayloadType } from "../utils/types";
+import { AuthRolesGuard } from "../users/guards/auth-roles.guard";
+import { Roles } from "../users/decorators/user-role.decorator";
+import { UserType } from "../utils/enums";
 import { UpdateReviewDto } from "./dtos/update-review.dto";
 import { ApiSecurity, ApiTags } from "@nestjs/swagger";
 

@@ -1,9 +1,9 @@
 import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-import { CURRENT_TIMESTAMP } from "src/utils/constants";
-import { Product } from "src/products/product.entity";
-import { Review } from "src/reviews/reviews.entity";
-import { UserType } from "src/utils/enums";
+import { CURRENT_TIMESTAMP } from "../utils/constants";
+import { Product } from "../products/product.entity";
+import { Review } from "../reviews/reviews.entity";
+import { UserType } from "../utils/enums";
 import { Exclude } from "class-transformer";
 
 @Entity({name: "users"})

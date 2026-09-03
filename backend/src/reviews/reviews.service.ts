@@ -3,11 +3,11 @@ import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/commo
 import { InjectRepository } from "@nestjs/typeorm";
 import { Review } from "./reviews.entity";
 import { Repository } from "typeorm";
-import { ProductService } from "src/products/products.service";
-import { UsersService } from "src/users/users.service";
+import { ProductService } from "../products/products.service";
+import { UsersService } from "../users/users.service";
 import { UpdateReviewDto } from './dtos/update-review.dto';
-import { JWTPayloadType } from 'src/utils/types';
-import { UserType } from 'src/utils/enums';
+import { JWTPayloadType } from '../utils/types';
+import { UserType } from '../utils/enums';
 
 @Injectable()
 export class ReviewsService {

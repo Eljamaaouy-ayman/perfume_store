@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-import { CURRENT_TIMESTAMP } from "src/utils/constants";
-import { Review } from "src/reviews/reviews.entity";
-import { User } from "src/users/user.entity";
+import { CURRENT_TIMESTAMP } from "../utils/constants";
+import { Review } from "../reviews/reviews.entity";
+import { User } from "../users/user.entity";
 
 @Entity({name: 'products'})
 export class Product{

@@ -1,9 +1,9 @@
-import { UserType } from 'src/utils/enums';
+import { UserType } from '../utils/enums';
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "./user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { JWTPayloadType, accessTokenType } from 'src/utils/types';
+import { JWTPayloadType, accessTokenType } from '../utils/types';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { AuthProvider } from './auth.provider';
 import { RegisterDto } from './dtos/register.dto';

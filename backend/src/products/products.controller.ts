@@ -2,11 +2,11 @@ import { Controller, Get, Post, Body, Param, NotFoundException, Put, Delete, Par
 import { CreateProductDto } from "./dtos/create-product.dto";
 import { UpdateProductDto } from "./dtos/update-product.dto";
 import { ProductService } from "./products.service";
-import { AuthRolesGuard } from "src/users/guards/auth-roles.guard";
-import { Roles } from "src/users/decorators/user-role.decorator";
-import { UserType } from "src/utils/enums";
-import { CurrentUser } from "src/users/decorators/current-user.decorator";
-import type { JWTPayloadType } from "src/utils/types";
+import { AuthRolesGuard } from "../users/guards/auth-roles.guard";
+import { Roles } from "../users/decorators/user-role.decorator";
+import { UserType } from "../utils/enums";
+import { CurrentUser } from "../users/decorators/current-user.decorator";
+import type { JWTPayloadType } from "../utils/types";
 import { ApiOperation, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
 import { SkipThrottle, Throttle } from "@nestjs/throttler";
 type ProductType = { id : number, title : string, price : number}

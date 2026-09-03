@@ -4,7 +4,7 @@ import { ProductService } from "./products.service";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Product } from "./product.entity";
 import { JwtModule } from "@nestjs/jwt";
-import { UsersModule } from "src/users/users.module";
+import { UsersModule } from "../users/users.module";
 
 @Module({
     controllers: [ProductsController],
