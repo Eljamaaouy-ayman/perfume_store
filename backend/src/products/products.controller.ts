@@ -8,6 +8,7 @@ import { UserType } from "src/utils/enums";
 import { CurrentUser } from "src/users/decorators/current-user.decorator";
 import type { JWTPayloadType } from "src/utils/types";
 import { ApiOperation, ApiQuery, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { SkipThrottle, Throttle } from "@nestjs/throttler";
 type ProductType = { id : number, title : string, price : number}
 
 @Controller("api/products")
@@ -26,6 +27,7 @@ export class ProductsController {
 
     // GET: ~/api/products
     @Get()
+    @Throttle({default: { limit: 5, ttl: 10000 }})
     @ApiOperation({summary: "get collection of products"})
     @ApiQuery({
         name: "title",
