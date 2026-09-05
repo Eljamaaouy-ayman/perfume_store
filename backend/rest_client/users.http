@@ -1,9 +1,10 @@
 
 ### get all users
-POST http://localhost:3000/api/users/auth/login
+POST http://localhost:3001/api/users/auth/login
 Content-Type: application/json
 
 {
-    "email": "eljamaaouyayman@gmail.com",
+    "email": "simo4@gmail.com",
     "password": "123456"
 }
+
