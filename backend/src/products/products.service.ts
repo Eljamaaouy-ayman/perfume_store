@@ -24,7 +24,7 @@ export class ProductService{
      * @param dto data of the product
      * @returns the new product created
      */
-    public async createNewProducts( dto : CreateProductDto, userId: number){
+    public async createNewProduct( dto : CreateProductDto, userId: number){
         const user = await this.usersService.getCurrentUser(userId)
         const newProduct = this.productsRepository.create({
             ...dto, 

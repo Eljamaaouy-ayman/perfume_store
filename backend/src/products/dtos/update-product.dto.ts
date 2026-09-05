@@ -8,7 +8,7 @@ export class UpdateProductDto {
     @MinLength(2)
     @IsOptional()
     @ApiPropertyOptional()
-    title : string;
+    title? : string;
     
     @IsString()
     @ApiPropertyOptional()
@@ -21,5 +21,5 @@ export class UpdateProductDto {
     @ApiPropertyOptional()
     @IsOptional()
     @Min(0, {message: "the price must be more than 0"})
-    price : number;
+    price? : number;
 }

@@ -22,7 +22,7 @@ export class ProductsController {
     @Roles(UserType.ADMIN)
     @ApiSecurity('bearer')
     public createNewProducts(@Body() Body : CreateProductDto, @CurrentUser() payload: JWTPayloadType){
-        return this.productService.createNewProducts(Body, payload.id)
+        return this.productService.createNewProduct(Body, payload.id)
     }
 
     // GET: ~/api/products
@@ -48,9 +48,9 @@ export class ProductsController {
         description: "search for products based on their max Price"
     })
     public getAllProducts(
-        @Query('title') title: string,
-        @Query('minPrice') minPrice: string,
-        @Query('maxPrice') maxPrice: string
+        @Query('title') title?: string,
+        @Query('minPrice') minPrice?: string,
+        @Query('maxPrice') maxPrice?: string
     ) {
         return this.productService.getAll(title, minPrice, maxPrice)
     }
