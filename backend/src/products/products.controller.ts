@@ -67,7 +67,7 @@ export class ProductsController {
     @UseGuards(AuthRolesGuard)
     @Roles(UserType.ADMIN)
     @ApiSecurity('bearer')
-    public putSingleProduct(@Param("id") id :number, @Body() Body : UpdateProductDto) {
+    public putSingleProduct(@Param("id", ParseIntPipe) id :number, @Body() Body : UpdateProductDto) {
         console.log("produc updated")
         return this.productService.Update(id, Body)
     }
@@ -77,7 +77,7 @@ export class ProductsController {
     @UseGuards(AuthRolesGuard)
     @Roles(UserType.ADMIN)
     @ApiSecurity('bearer')
-    public DeleteProduct(@Param("id") id :number) {
+    public DeleteProduct(@Param("id", ParseIntPipe) id :number) {
         return this.productService.Delete(id)
     }
 }

@@ -1,5 +1,5 @@
 import { accessTokenType } from './../src/utils/types';
-import { INestApplication, ValidationPipe } from '@nestjs/common'
+import { Body, INestApplication, ValidationPipe } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
 import { AppModule } from '../src/app.module'
 import { CreateProductDto } from '../src/products/dtos/create-product.dto'
@@ -109,6 +109,73 @@ describe('products controller e2e', () => {
             const response = await request(app.getHttpServer()).get("/api/products?minPrice=10&maxPrice=200");
             expect(response.status).toBe(200)
             expect(response.body).toHaveLength(3)
+        })
+    })
+
+    describe("GET /:id", () => {
+        it("should return a 404 status if product was not found", async () => {
+
+            const response = await request(app.getHttpServer())
+            .get(`/api/products/1`)
+            expect(response.status).toBe(404)
+        })
+
+        it("should return a 400 status if id passed is unvalid", async () => {
+
+            const response = await request(app.getHttpServer())
+            .get(`/api/products/sdf`)
+            expect(response.status).toBe(400)
+        })
+    })
+
+    describe("PUT /:id", () => {
+        it("should update the product", async () => {
+            const {body} = await request(app.getHttpServer()).post("/api/products").set("Authorization", `Bearer ${accessToken}`).send(dto)
+            const response = await request(app.getHttpServer()).put(`/api/products/${body.id}`).set("Authorization", `Bearer ${accessToken}`).send({title: "updated"})
+            expect(response.status).toBe(200)
+            expect(response.body.title).toBe("updated")
+        })
+
+        it("should return 400 status if title length is less than 2 characters", async () => {
+            const {body} = await request(app.getHttpServer()).post("/api/products").set("Authorization", `Bearer ${accessToken}`).send(dto)
+            const response = await request(app.getHttpServer()).put(`/api/products/${body.id}`).set("Authorization", `Bearer ${accessToken}`).send({title: "u"})
+            expect(response.status).toBe(400)
+        })
+
+        it("should return 404 status if product was not found", async () => {
+            const response = await request(app.getHttpServer()).put(`/api/products/1`).set("Authorization", `Bearer ${accessToken}`).send({title: "updated"})
+            expect(response.status).toBe(404)
+            expect(response.body).toMatchObject({ message: "product not found" })
+        })
+
+        it("should return 400 status if unvalid id passed", async () => {
+            const response = await request(app.getHttpServer()).put(`/api/products/sdf`).set("Authorization", `Bearer ${accessToken}`).send({title: "updated"})
+            expect(response.status).toBe(400)
+        })
+    })
+
+    describe("delete /:id", () => {
+        it ("should delete the product with the given id", async () => {
+            const {body} = await request(app.getHttpServer()).post("/api/products").set("Authorization", `Bearer ${accessToken}`).send(dto)
+            const response = await request(app.getHttpServer()).delete(`/api/products/${body.id}`).set("Authorization", `Bearer ${accessToken}`)
+            expect(response.status).toBe(200)
+            expect(response.body).toMatchObject({message : 'product deleted successfully'})
+        })
+
+        it ("should return 401 status code if no token provided", async () => {
+            const {body} = await request(app.getHttpServer()).post("/api/products").set("Authorization", `Bearer ${accessToken}`).send(dto)
+            const response = await request(app.getHttpServer()).delete(`/api/products/${body.id}`)
+            expect(response.status).toBe(401)
+        })
+
+        it ("should return 404 status code if product not found", async () => {
+            const response = await request(app.getHttpServer()).delete(`/api/products/1`).set("Authorization", `Bearer ${accessToken}`)
+            expect(response.status).toBe(404)
+        })
+
+        it("should return 400 status if unvalid id passed", async () => {
+            const response = await request(app.getHttpServer()).delete(`/api/products/sdf`).set("Authorization", `Bearer ${accessToken}`)
+            expect(response.status).toBe(400)
         })
     })
 })
