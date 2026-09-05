@@ -43,9 +43,9 @@ export class AuthProvider{
         })
 
         newUser = await this.usersRepository.save(newUser)
-        const link = this.generateLink(newUser.id, newUser.verificatoinToken)
+        // const link = this.generateLink(newUser.id, newUser.verificatoinToken)
 
-        await this.mailService.verifyEmail(email, link)
+        // await this.mailService.verifyEmail(email, link)
 
         
         return { message: 'verification token has been sent to your email, please verify your email address' }
@@ -77,7 +77,7 @@ export class AuthProvider{
         }
         const accessToken = await this.generateJWTToken({id: user.id, usertype: user.userType})
 
-        await this.mailService.sendLoginMail(user.email)
+        // await this.mailService.sendLoginMail(user.email)
 
 
         return {accessToken}

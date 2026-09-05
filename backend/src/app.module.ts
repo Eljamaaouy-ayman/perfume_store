@@ -1,4 +1,4 @@
-import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
+import { ClassSerializerInterceptor, MiddlewareConsumer, Module, NestModule, RequestMethod, ValidationPipe } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { ProductsModule } from './products/products.module';
@@ -7,7 +7,7 @@ import { Product } from './products/product.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Review } from './reviews/reviews.entity';
 import { User } from './users/user.entity';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { UploadsModule } from './uploads/uploads.module';
 import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
@@ -54,6 +54,10 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard
+    },
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe
     }
   ]
 })
