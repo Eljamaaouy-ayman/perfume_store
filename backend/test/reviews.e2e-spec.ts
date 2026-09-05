@@ -12,6 +12,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { CreateReviewDto } from '../src/reviews/dtos/create-review.dto';
 import { Review } from '../src/reviews/reviews.entity';
 import { CreateProductDto } from '../src/products/dtos/create-product.dto';
+import { response } from 'express';
 
 describe('reviews controller e2e', () => {
     let app : INestApplication
@@ -19,10 +20,10 @@ describe('reviews controller e2e', () => {
     let accessToken: string
     let createReviewDto: CreateReviewDto
     let productDto: CreateProductDto = { title: "book", description: "about this book", price: 10 }
+    createReviewDto = {comment: 'thanks', rating: 4}
     
 
     beforeEach(async () => {
-        createReviewDto = {comment: 'thanks', rating: 4}
         const module : TestingModule = await Test.createTestingModule({
             imports: [AppModule]
         }).compile()
@@ -49,15 +50,22 @@ describe('reviews controller e2e', () => {
         await app.close()
     })
 
-    describe("it should create a new review and save it to the database", async () => {
-        await request(app.getHttpServer())
-        .post("/api/products")
-        .set("Authorization", `Bearer ${accessToken}`)
-        .send(productDto)
+    describe("POST", () => {
+        it("it should create a new review and save it to the database", async () => {
 
-        await request(app.getHttpServer())
-        .post("/api/reviews")
-        .set("Authorization", `Bearer ${accessToken}`)
-        .send(productDto)
+            const {body} = await request(app.getHttpServer())
+            .post("/api/products")
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send(productDto)
+    
+            const response = await request(app.getHttpServer())
+            .post(`/api/reviews/${body.id}`)
+            .set("Authorization", `Bearer ${accessToken}`)
+            .send(createReviewDto)
+    
+            expect(response.status).toBe(201)
+            expect(response.body).toBeDefined()
+            expect(response.body).toMatchObject(createReviewDto)
+        })
     })
 })
