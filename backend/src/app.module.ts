@@ -9,7 +9,7 @@ import { Review } from './reviews/reviews.entity';
 import { User } from './users/user.entity';
 import { APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
 import { UploadsModule } from './uploads/uploads.module';
-import { MailModule } from './mail/mail.module';
+// import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './utils/middlewares/logger.middleware';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { dataSourceOptions } from '../db/data-source';
@@ -22,7 +22,7 @@ import { AppController } from './app.controller';
     UsersModule,
     ReviewsModule,
     UploadsModule,
-    MailModule,
+    // MailModule,
     TypeOrmModule.forRoot(dataSourceOptions ),
     ConfigModule.forRoot({
       isGlobal: true,

@@ -8,7 +8,7 @@ import { RegisterDto } from "./dtos/register.dto";
 import { accessTokenType, JWTPayloadType } from "../utils/types";
 import * as bcrypt from 'bcryptjs';
 import { LoginDto } from "./dtos/login.dto";
-import { MailService } from '../mail/mail.service';
+// import { MailService } from '../mail/mail.service';
 import { randomBytes } from 'node:crypto';
 import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
@@ -18,7 +18,7 @@ export class AuthProvider{
     constructor(
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         private readonly jwtService: JwtService,
-        private readonly mailService: MailService,
+        // private readonly mailService: MailService,
         private readonly config: ConfigService
     ){}
 
@@ -71,7 +71,7 @@ export class AuthProvider{
                 const result = this.usersRepository.save(user)
             }
             const link = this.generateLink(user.id, user.verificatoinToken)
-            await this.mailService.verifyEmail(email, link)
+            // await this.mailService.verifyEmail(email, link)
 
             return { message: 'verification token has been sent to your email, please verify your email address' }
         }
@@ -97,7 +97,7 @@ export class AuthProvider{
         const resetLink = `${this.config.get<string>('CLIENT_DOMAIN')}/reset-password/${result.id}/${result.resetPasswordToken}`
 
         console.log(resetLink)
-        await this.mailService.resetPassword(email, resetLink)
+        // await this.mailService.resetPassword(email, resetLink)
         return {message : "password reset link sent to your email, please check your inbox"}
     }
         
